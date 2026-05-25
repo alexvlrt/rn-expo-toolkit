@@ -1,8 +1,10 @@
 <div align="center">
 
-# 📱 rn-expo-toolkit
+# 📱 React Native + Expo Toolkit
 
 ### Reusable, **authority-led** conventions for production React Native + Expo apps — packaged as a Claude Code plugin.
+
+<sub><code>rn-expo-toolkit</code></sub>
 
 <br/>
 
