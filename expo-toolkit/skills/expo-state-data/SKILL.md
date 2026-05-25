@@ -11,7 +11,7 @@ description: "Use when wiring TanStack Query and Zustand into a RN+Expo app, des
 
 ## Authority-preferred defaults
 
-- **TanStack Query v5** for server state; **Zustand v5** for local state.
+- **TanStack Query v5** for server state; **Zustand v4 (or v5)** for local state.
 - Native screen data: **`useQuery`**, not Expo Router loaders (web-only; see
   `native-data-fetching` → `expo-router-loaders.md`).
 

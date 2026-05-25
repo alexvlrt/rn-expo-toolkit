@@ -213,6 +213,8 @@ This pattern has four sub-rules:
 ### Hono+Drizzle reference
 
 ```ts
+import { timingSafeEqual } from "node:crypto"; // Workers: enable nodejs_compat in wrangler.toml; or use a crypto.subtle HMAC comparison.
+
 // routes/webhooks.ts
 webhookRoutes.post("/<provider>", async (c) => {
   // 1. Constant-time auth
@@ -522,7 +524,7 @@ dispatch(new RecomputeDailySummaryJob($userId, $today));
 ### Laravel note
 
 Use `dispatch()` for work that must survive restarts (anything touching external APIs or
-storage). Use `dispatch()->afterResponse()` (Laravel 10+) for lightweight work that can
+storage). Use `dispatch()->afterResponse()` (Laravel 8+) for lightweight work that can
 run inline after the HTTP response is sent, without a queue worker. Avoid `defer()` for
 database writes in high-traffic scenarios — it runs synchronously on the same PHP-FPM
 worker after the response, blocking the next request.

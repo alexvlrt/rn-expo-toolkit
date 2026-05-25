@@ -35,11 +35,11 @@ The skill generates:
 - `app.config.ts` with the variant selector pattern (`process.env.APP_VARIANT`) and `runtimeVersion: { policy: 'fingerprint' }`.
 - `.env.development`, `.env.staging`, `.env.production` skeletons.
 
-### Step 2 — NativeWind v5
+### Step 2 — NativeWind
 
 Invoke the authoritative `expo-tailwind-setup` skill (this is a first-party Expo/NativeWind skill, not a toolkit skill).
 
-This installs and configures NativeWind v5 + Tailwind CSS v4, sets up `tailwind.config.ts` with the `apps/mobile` content glob, and verifies `className` prop support is wired into Metro and Expo.
+This installs and configures NativeWind via `expo-tailwind-setup` (v5 + Tailwind v4 for a fresh project; v4 if you're on an existing v4 codebase), sets up `tailwind.config.ts` with the `apps/mobile` content glob, and verifies `className` prop support is wired into Metro and Expo.
 
 ### Step 3 — i18n
 
@@ -109,17 +109,22 @@ The skill generates:
 - Permission-request flow with graceful degradation when denied.
 - OS-revocation reconciliation: on app foreground, re-check `getPermissionsAsync` and sync stored `notificationsEnabled` state.
 
-### Step 9 — DX scripts
+### Step 0.5 — Machine ready? (one-time, run before Step 1)
+
+Before scaffolding, confirm the dev machine is bootstrapped. If in doubt, invoke the `expo-env-setup` skill.
+
+It produces an idempotent `scripts/setup.sh` + `scripts/doctor.sh` that install JDK 17, Android SDK + ADB (with OS-specific paths for WSL2 / native Linux / macOS), and the iOS toolchain on macOS (Xcode, CocoaPods via rbenv, simulators). Run `setup.sh` once per machine; run `doctor.sh` before every native rebuild to verify tool versions.
+
+### Step 9 — DX scripts (daily dev loop)
 
 Invoke the `expo-dx-scripts` skill.
 
 Provide it: the backend dev port (e.g. `8787` for Workers, `3000` for Node/Express) and whether the team uses WSL2 (enables the `usbipd` auto-attach path).
 
-The skill generates:
+The skill generates the **daily-loop** scripts only (machine assumed already bootstrapped by `expo-env-setup` above):
 - `scripts/dev.sh` — Metro + cloudflared backend tunnel + `adb reverse` + `expo start --dev-client`.
 - `scripts/dev-ios.sh` — two cloudflared tunnels + `EXPO_PACKAGER_PROXY_URL`.
 - `scripts/build-android.sh` — `expo run:android --no-bundler` compile + install.
-- `scripts/setup.sh` — idempotent bootstrap (OS detection → Node → pnpm → Java → Android SDK → `.env.local` copy).
 - `scripts/lib/adb.sh` — ADB device picker: USB → usbipd → mDNS waterfall.
 - `scripts/lib/usbip.sh` (if WSL2) — `usbipd` list-parse + auto-attach.
 - `package.json` `scripts` entries: `dev`, `dev:ios`, `build:android`, `install:env`.

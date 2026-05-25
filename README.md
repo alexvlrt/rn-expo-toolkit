@@ -13,7 +13,7 @@
 [![React Native](https://img.shields.io/badge/React%20Native-0.83-61DAFB?logo=react&logoColor=white)](https://reactnative.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-3DA639.svg)](./LICENSE)
 
-<sub>10 skills · 2 reviewer agents · 3 commands · 3 hooks · zero drop-in code</sub>
+<sub>13 skills · 2 reviewer agents · 3 commands · 3 hooks · zero drop-in code</sub>
 
 </div>
 
@@ -55,7 +55,7 @@ The guiding principle: **use the cheapest primitive that achieves the goal.** "A
 🪝  hooks/      AUTO enforcement        silent, deterministic, on every edit
 ⌨️  commands/   USER-triggered flows    /new-expo-app · /polish · /ship-check
 🤖  agents/     JUDGMENT personas       review · security
-🧠  skills/     KNOWLEDGE               the 10 — referenced by everything above
+🧠  skills/     KNOWLEDGE               the 13 — referenced by everything above
 ```
 
 A `/new-expo-app` invocation *consumes* the skills · the reviewer agents *apply* their conventions · the hooks *enforce* what they recommend.
@@ -76,6 +76,9 @@ A `/new-expo-app` invocation *consumes* the skills · the reviewer agents *apply
 | **`expo-dx-scripts`** | pnpm dev/build wrappers + cloudflared backend tunnel + ADB device picker + WSL `usbipd` auto-attach. | `expo-dev-client` |
 | **`expo-release-discipline`** | OTA-vs-native-rebuild classification, CHANGELOG discipline, the pre-OTA runtime-cohort guard. | `expo-deployment`, `expo-cicd-workflows`, `eas-update-insights` |
 | **`api-backend-patterns`** | Backend-agnostic (Hono+Drizzle ref + Laravel note): per-resource authz-404, JWT token-versioning revocation, OIDC verify, webhook reconciliation, shared Zod, GDPR cascade. | — |
+| **`expo-env-setup`** | One-time cross-OS machine bootstrap (`setup.sh` + `doctor.sh`): JDK 17, Android SDK, ADB (WSL2 usbipd / Linux udev / macOS), and the iOS toolchain on macOS (Xcode, CocoaPods via rbenv, simulators). | `expo-dev-client` |
+| **`expo-offline-queue`** | Offline-first mutations: a persisted optimistic queue with revert-on-fail, batch `/sync-offline` replay on reconnect (NetInfo), idempotency keys, and dead-letter handling. | `native-data-fetching` |
+| **`expo-auth-mobile`** | Sign in with Apple/Google (raw token → backend), stable device identity (SecureStore/localStorage), and the in-place anonymous→identified merge checklist (email-vs-OAuth parity, RC continuity). | `api-backend-patterns` |
 
 <sub>Dense sub-patterns live in `references/`: <code>expo-ui-kit/references/sheets.md</code> (gorhom bottom-sheet deep-dive) and <code>expo-revenuecat-superwall/references/superwall-bridge.md</code> (the full <code>PurchaseController</code> lifecycle).</sub>
 
@@ -123,7 +126,7 @@ The skills are written generically. Each ends with an **"Adapt for your project"
 expo-toolkit/
 ├── .claude-plugin/plugin.json      plugin manifest
 ├── SKILL_TEMPLATE.md               template for new skills
-├── skills/        10 skills (2 with references/)
+├── skills/        13 skills (2 with references/)
 ├── agents/        expo-code-reviewer · expo-security-reviewer
 ├── commands/      new-expo-app · polish · ship-check
 └── hooks/         hooks.json + 3 .mjs scripts

@@ -1,6 +1,6 @@
 ---
+name: expo-release-discipline
 description: "Use before shipping any change to a published RN+Expo app — classifies the change as OTA-safe vs native-rebuild, verifies the runtime policy (fingerprint, never appVersion), prescribes a CHANGELOG entry template, and runs a pre-OTA runtime guard via eas channel:insights. Composes expo-deployment + expo-cicd-workflows + eas-update-insights with the project-tuned classification discipline."
-allowed-tools: Bash, Read, Glob, Grep
 ---
 
 # expo-release-discipline
@@ -99,19 +99,20 @@ The cost of an unnecessary native rebuild is approximately 30 minutes of build t
 Before every `eas update --branch production`, verify that the runtime version you are about to target actually has an embedded cohort in production. An OTA pushed at runtime `abc123` is **invisible** to all devices running a binary built at a different fingerprint.
 
 ```bash
-# Step 1 — check what runtime the current production build uses
-eas channel:insights --channel production
+# Step 1 — list the live runtime(s) in production + their embedded device counts
+eas channel:view production
+# Output shows each runtime hash currently serving devices. Note the hash you are about to target.
 
-# Step 2 — confirm the runtime you are about to target matches
-eas channel:insights --channel production --runtime-version <new-fingerprint>
-# Should show a non-zero embedded device count. If the count is 0, the OTA
-# will not be served to any device — stop and investigate.
+# Step 2 (optional) — per-runtime cohort detail for the specific runtime you will push to
+eas channel:insights --channel production --runtime-version <runtime-from-above>
+# Shows device counts, update adoption, and platform split for that runtime.
+# A count of 0 means no devices are running that binary — the OTA will be invisible.
 
-# Step 3 — then push if the cohort check passes
+# Step 3 — push only if the runtime has a non-zero embedded cohort
 eas update --branch production --environment production --message "<short summary>"
 ```
 
-If the embedded cohort count is zero, the binary shipped in production does not match the runtime you are targeting. You likely need a native rebuild first, or you are targeting the wrong channel.
+If `eas channel:view production` shows the runtime you intend to target has zero or no matching devices, the binary in production does not match that fingerprint. You likely need a native rebuild first, or you are targeting the wrong channel.
 
 ---
 

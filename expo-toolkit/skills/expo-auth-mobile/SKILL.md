@@ -147,7 +147,7 @@ async function handleAppleSignIn(queryClient: ReturnType<typeof useQueryClient>)
 
   const resp = await api.post<{ token: string; user: { id: string } }>("/auth/apple", {
     identityToken: credential.identityToken,
-    nonce: rawNonce,          // raw — backend hashes before comparing
+    nonce: rawNonce,          // raw — backend SHA-256s this raw nonce and compares to the ID token's nonce claim
     anonymousUserId: anonymousUserId ?? undefined,
     fullName: [credential.fullName?.givenName, credential.fullName?.familyName]
       .filter(Boolean).join(" ") || undefined,

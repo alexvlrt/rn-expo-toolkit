@@ -3,16 +3,14 @@ name: expo-revenuecat-superwall
 description: "Use when wiring RevenueCat + Superwall into a RN+Expo app, gating UI behind premium, syncing subscription state to a server, or handling the anon-to-identified user transition. Covers: RC init/identity, the custom Superwall PurchaseController bridge, the gate + fallback-overlay pattern, the logOut anonymous guard, the appUserID↔JWT-sub↔REST-customerId coupling, and server-side webhook reconciliation that never trusts the payload."
 ---
 
-## Complements
-
-Complements `RevenueCat:integrate-revenuecat` (base SDK setup — use that first),
-`revenuecat-identify-user` (logIn/logOut and the anonymous-id rules),
-`revenuecat-entitlements-gate` (CustomerInfo + listener), `revenuecat-purchase-flow`,
-`revenuecat-paywall`, `revenuecat-troubleshoot`. This skill adds: the Superwall ↔ RC
-bridge via a custom `PurchaseController`, the subscription gate hook + shared fallback
-overlay, the anon-identity continuity pattern (`/auth/refresh` keeps the anonymous
-appUserID stable across JWT expiry), and the server-side never-trust-the-webhook
-reconciliation against RC REST v2.
+> **Complements:** `RevenueCat:integrate-revenuecat` (base SDK setup — use that first),
+> `revenuecat-identify-user` (logIn/logOut and the anonymous-id rules),
+> `revenuecat-entitlements-gate` (CustomerInfo + listener), `revenuecat-purchase-flow`,
+> `revenuecat-paywall`, `revenuecat-troubleshoot`. This skill adds: the Superwall ↔ RC
+> bridge via a custom `PurchaseController`, the subscription gate hook + shared fallback
+> overlay, the anon-identity continuity pattern (`/auth/refresh` keeps the anonymous
+> appUserID stable across JWT expiry), and the server-side never-trust-the-webhook
+> reconciliation against RC REST v2.
 
 ## Authority-preferred default
 
@@ -107,8 +105,8 @@ See `references/superwall-bridge.md` for the full lifecycle deep-dive.
   Play sandbox subscriptions renew on an accelerated ~5-minute clock; RevenueCat reports
   them expired almost immediately while entitlement still says active).
 
-See `references/server-reconciliation.md` (co-authored with `api-backend-patterns` in
-Phase 4 of this toolkit; not on disk yet). The canonical pattern is a Hono + Drizzle +
+See `references/server-reconciliation.md` (co-authored with `api-backend-patterns`;
+not on disk yet). The canonical pattern is a Hono + Drizzle +
 RC REST v2 reconciler — your backend's webhook handler should follow the rules in this
 section regardless of the framework.
 
@@ -334,7 +332,8 @@ export async function reconcileSubscriptionFromRC(
     return { kind: "ok" };
   }
   // ent.kind === "active": resolve plan + dates from /subscriptions endpoint.
-  // ...upsert subscription row... (see apps/api/src/services/subscription.ts)
+  // ...upsert subscription row... (see your backend's subscription-reconciliation service —
+  // the canonical pattern is a Hono+Drizzle or Laravel implementation)
   return { kind: "ok" };
 }
 
@@ -349,7 +348,7 @@ if (result.kind === "rc_unavailable") return c.json({ error: "rc_unavailable" },
 
 Two sub-patterns are too dense for this SKILL.md:
 
-### `references/superwall-bridge.md` (Task 4 of Phase 2)
+### `references/superwall-bridge.md`
 
 The complete `RcPurchaseController` lifecycle: `purchaseFromAppStore` → `getOfferings` →
 package lookup → `purchasePackage` → result mapping; `restorePurchases` mirror;
@@ -358,12 +357,12 @@ the `addCustomerInfoUpdateListener` → Superwall status wire-up at boot; cancel
 detection (`userCancelled === true` OR `code === "1"` / `code === 1`); common
 `SWKPresentationError 105` cause and fix.
 
-### Server reconciliation deep-dive (deferred, planned for Phase 4)
+### Server reconciliation deep-dive (planned / not yet on disk — not a broken link)
 
 The dedicated `references/<…>.md` file for the webhook + RC REST v2 reconciliation
-pattern is co-authored with the `api-backend-patterns` skill in Phase 4 (not yet
-on disk — do not look for a broken link). For now, the canonical Hono + Drizzle
-implementation is `apps/api/src/services/subscription.ts` in the source monorepo.
+pattern is co-authored with the `api-backend-patterns` skill (not yet on disk — do not
+look for a broken link). The canonical pattern is a Hono+Drizzle or Laravel
+implementation in your backend's subscription-reconciliation service.
 Key patterns it encodes: KV idempotency dedupe on `event.id` (7-day TTL),
 constant-time bearer comparison, the three-state never-downgrade logic,
 development-sandbox guard, and `rc_unavailable → 503` so RC retries on transient

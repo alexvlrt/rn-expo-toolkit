@@ -3,7 +3,7 @@ name: expo-observability
 description: "Use when wiring Sentry and PostHog into a RN+Expo app (privacy-safe init, PII scrubbing, environment partitioning, variant tagging, env/secrets handling). Enforces: never sending sensitive/health fields to analytics, env-prefixed distinct_id to protect prod users sharing a UUID, beforeSend scrub before dispatch, lifecycle/replay disabled to control free-tier budget."
 ---
 
-> **Complements:** no single authoritative plugin skill covers Sentry + PostHog wiring together; this skill encodes the project's privacy-safe wiring directly, distilled from a production Expo SDK 55 app. For the GDPR account-deletion cascade (PostHog person delete + Sentry feedback delete), see `api-backend-patterns` (Phase 4 of this toolkit).
+> **Complements:** no single authoritative plugin skill covers Sentry + PostHog wiring together; this skill encodes the project's privacy-safe wiring directly, distilled from a production Expo SDK 55 app. For the GDPR account-deletion cascade (PostHog person delete + Sentry feedback delete), see `api-backend-patterns`.
 
 ---
 
@@ -107,11 +107,12 @@ export function initSentry() {
 ### PostHog init with blocklist + env-prefixed `distinct_id`
 
 ```ts
-import PostHog from "posthog-react-native";
+import { PostHog } from "posthog-react-native";
+import Constants from "expo-constants";
 
 let posthogClient: PostHog | null = null;
 
-const ENV = process.env.EXPO_PUBLIC_ENV ?? "development";
+const ENV = Constants.expoConfig?.extra?.variant ?? "development";
 
 // Replace with your project's sensitive field names.
 // Examples from a health domain: "nutrients","deficiencies","heightCm","weightKg","bmi"
@@ -220,8 +221,7 @@ useEffect(() => {
 
 - **Sensitive field names** — replace the `<YOUR_SENSITIVE_FIELD_*>` placeholders.
   Consider importing one canonical list into both `sentry.ts` and `posthog.ts`.
-- **Env var names** — `EXPO_PUBLIC_SENTRY_DSN`, `EXPO_PUBLIC_POSTHOG_KEY`, and
-  `EXPO_PUBLIC_ENV` are common conventions; rename to match your project's `.env` schema.
+- **Env var names** — `EXPO_PUBLIC_SENTRY_DSN` and `EXPO_PUBLIC_POSTHOG_KEY` are common conventions; rename to match your project's `.env` schema. The environment/variant tag comes from `Constants.expoConfig?.extra?.variant`, not a separate `EXPO_PUBLIC_ENV` var.
 - **Sample rates** — `tracesSampleRate: 0.1` is conservative. Raise during a launch or
   incident; set to `0` to disable tracing and keep only error reporting.
 - **Env partitioning** — if you have separate PostHog projects per environment (paid tier),

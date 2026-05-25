@@ -3,11 +3,11 @@ name: expo-ui-kit
 description: "Use when adding or normalizing UI primitives in a RN+Expo app — modals, bottom sheets, toasts, cards, buttons, progress bars, icon styling, safe-area handling. Enforces a single AppModal/SheetBackdrop pattern, the topInset + footer math for sheets, NativeWind className-only styling, Lucide-only icons, and Reanimated 4 animation idioms (avoid shared values for press feedback, avoid animating layout properties)."
 ---
 
-Complements `building-native-ui` (Software Mansion New-Arch patterns; this skill adds
-normalized modal/sheet/toast primitives and the safe-area conventions encoded below),
-`react-native-best-practices` (Reanimated/Worklets correctness), `expo-tailwind-setup`
-(base NativeWind v5 — this skill assumes NativeWind v4 or v5 and stays color-token-agnostic),
-and `ui-ux-pro-max` (design system primitives).
+> **Complements:** `building-native-ui` (Software Mansion New-Arch patterns; this skill adds
+> normalized modal/sheet/toast primitives and the safe-area conventions encoded below),
+> `react-native-best-practices` (Reanimated/Worklets correctness), `expo-tailwind-setup`
+> (base NativeWind v5 — this skill assumes NativeWind v4 or v5 and stays color-token-agnostic),
+> and `ui-ux-pro-max` (design system primitives).
 
 ---
 
@@ -131,9 +131,10 @@ const renderFooter = useCallback(
 
 // Imperative primitive — open via `sheetRef.current?.present()`, dismiss via `.dismiss()`.
 // (See references/sheets.md for the `BottomSheetModal` vs `BottomSheet` distinction.)
+// % snap points are relative to screen height; topInset shifts the ceiling below the notch
 return (
   <BottomSheetModal ref={sheetRef} snapPoints={["85%"]}
-    topInset={insets.top}   {/* % snap points are relative to screen height; topInset shifts the ceiling below the notch */}
+    topInset={insets.top}
     enablePanDownToClose onDismiss={onClose}
     backdropComponent={SheetBackdrop} footerComponent={renderFooter}>
     <BottomSheetScrollView className="flex-1 px-4">
@@ -190,6 +191,8 @@ return (
   </View>
 );
 ```
+
+> **Note:** `transformOrigin` requires RN 0.76+ (New Architecture). On older RN, animate `width` or anchor a left-aligned `scaleX` parent instead.
 
 ### Toast pattern — imperative Zustand store
 

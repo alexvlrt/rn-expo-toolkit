@@ -1,6 +1,6 @@
 ---
+name: expo-dx-scripts
 description: "Use when setting up local dev for a RN+Expo app on Linux/WSL/macOS, exposing a local backend to a physical device, picking an ADB device automatically, or auto-attaching USB devices into WSL2. Wraps expo run / Metro / cloudflared tunnel / ADB reverse / usbipd into pnpm scripts that source per-variant .env files. Companion to expo-dev-client (which covers the EAS-blessed dev-client build flow)."
-allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # expo-dx-scripts
@@ -130,7 +130,7 @@ APK_PATH="$PROJECT_DIR/android/app/build/outputs/apk/debug/app-debug.apk"
 "$CLOUDFLARED" tunnel --url http://localhost:8787 --no-autoupdate > "$TUNNEL_LOG" 2>&1 &
 TUNNEL_URL=""
 for i in $(seq 1 120); do
-  TUNNEL_URL="$(grep -oP 'https://[a-z0-9-]+\.trycloudflare\.com' "$TUNNEL_LOG" | head -1 || true)"
+  TUNNEL_URL="$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' "$TUNNEL_LOG" | head -1 || true)"
   [ -n "$TUNNEL_URL" ] && break
   sleep 0.5
 done
@@ -182,7 +182,7 @@ start_tunnel() {
   local port="$1" log="$2"
   "$CLOUDFLARED" tunnel --url "http://localhost:${port}" --no-autoupdate > "$log" 2>&1 &
   for _ in $(seq 1 120); do
-    local url; url="$(grep -oP 'https://[a-z0-9-]+\.trycloudflare\.com' "$log" | head -1 || true)"
+    local url; url="$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' "$log" | head -1 || true)"
     [ -n "$url" ] && { echo "$url"; return 0; }
     sleep 0.5
   done
@@ -274,16 +274,16 @@ ensure_adb_device() {
 
   local count; count="$(echo "$mdns" | wc -l)"
   if [ "$count" -eq 1 ]; then
-    local addr; addr="$(echo "$mdns" | grep -oP '\d+\.\d+\.\d+\.\d+:\d+' || true)"
+    local addr; addr="$(echo "$mdns" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+' || true)"
     [ -n "$addr" ] && adb connect "$addr"
   else
     echo -e "${YELLOW}Multiple mDNS devices:${NC}"
     local i=1; while IFS= read -r line; do
-      echo "  $i) $(echo "$line" | grep -oP '\d+\.\d+\.\d+\.\d+:\d+' || true)"
+      echo "  $i) $(echo "$line" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+' || true)"
       i=$((i+1))
     done <<< "$mdns"
     local choice; read -rp "Select device number: " choice
-    local sel; sel="$(echo "$mdns" | sed -n "${choice}p" | grep -oP '\d+\.\d+\.\d+\.\d+:\d+' || true)"
+    local sel; sel="$(echo "$mdns" | sed -n "${choice}p" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+' || true)"
     [ -n "$sel" ] && adb connect "$sel" || { echo -e "${RED}Invalid selection.${NC}"; exit 1; }
   fi
 
@@ -296,10 +296,10 @@ ensure_adb_device() {
 # Prefers IP:port (wireless) over USB serial so a re-used adb-connect session wins.
 pick_device_serial() {
   local s
-  s="$(adb devices 2>/dev/null | tail -n +2 | grep -w device | grep -oP '^\S+' \
-        | grep -P '^\d+\.\d+\.\d+\.\d+' | head -1 || true)"
+  s="$(adb devices 2>/dev/null | tail -n +2 | grep -w device | grep -oE '^[^[:space:]]+' \
+        | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)"
   [ -z "$s" ] && s="$(adb devices 2>/dev/null | tail -n +2 | grep -w device \
-        | grep -oP '^\S+' | head -1 || true)"
+        | grep -oE '^[^[:space:]]+' | head -1 || true)"
   echo "$s"
 }
 ```

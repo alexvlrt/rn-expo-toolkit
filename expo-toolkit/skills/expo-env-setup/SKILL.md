@@ -104,7 +104,7 @@ command -v pnpm &>/dev/null \
 step "3" "Java JDK 17"
 needs_java() {
   command -v java &>/dev/null || return 0
-  local v; v=$(java -version 2>&1 | head -1 | grep -oP '\d+' | head -1)
+  local v; v=$(java -version 2>&1 | head -1 | grep -oE '[0-9]+' | head -1)
   [ "$v" -lt 17 ]
 }
 if needs_java; then
@@ -115,7 +115,7 @@ if needs_java; then
   esac
   ok "OpenJDK 17 installed"
 else
-  ok "Java $(java -version 2>&1 | head -1 | grep -oP '\d+' | head -1)"
+  ok "Java $(java -version 2>&1 | head -1 | grep -oE '[0-9]+' | head -1)"
 fi
 
 # ── 4. Android SDK ──────────────────────────────────────────────────────────
@@ -332,9 +332,10 @@ brew install watchman
 # Exit 0 = all good; non-zero = at least one check failed.
 set -uo pipefail
 
-GREEN='\033[0;32m'; RED='\033[0;31m'; NC='\033[0m'
+GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
 FAIL=0
 ok()   { echo -e "  ${GREEN}✓${NC} $1"; }
+warn() { echo -e "  ${YELLOW}⚠${NC} $1"; }
 fail() { echo -e "  ${RED}✗${NC} $1"; FAIL=1; }
 
 case "$(uname -s)" in
@@ -356,8 +357,8 @@ command -v pnpm &>/dev/null && ok "pnpm $(pnpm -v)" || fail "pnpm missing"
 
 # JDK ≥17
 command -v java &>/dev/null \
-  && [ "$(java -version 2>&1 | head -1 | grep -oP '\d+' | head -1)" -ge 17 ] \
-  && ok "Java $(java -version 2>&1 | head -1 | grep -oP '\d+' | head -1)" \
+  && [ "$(java -version 2>&1 | head -1 | grep -oE '[0-9]+' | head -1)" -ge 17 ] \
+  && ok "Java $(java -version 2>&1 | head -1 | grep -oE '[0-9]+' | head -1)" \
   || fail "JDK 17+ missing"
 
 # ANDROID_HOME + sdkmanager

@@ -79,7 +79,7 @@ i18n
     returnEmptyString: false,
     saveMissing: __DEV__,
     missingKeyHandler: __DEV__
-      ? (lng, _ns, key) => console.warn(`[i18n] missing key '${key}' for locale '${lng}'`)
+      ? (lngs, _ns, key) => console.warn(`[i18n] missing key "${key}" for ${Array.isArray(lngs) ? lngs.join(",") : lngs}`)
       : undefined,
   })
   .catch((err) => console.error("[i18n] init failed", err));
