@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "rn-expo-toolkit",
+  "description": "Reusable RN+Expo conventions: UI kit, payments wiring, observability, dev scripts, release discipline — authority-led, opinionated glue layered on top of building-native-ui / react-native-best-practices / tanstack-query / RevenueCat / expo-deployment.",
+  "owner": {
+    "name": "Alexandre Vuillerot",
+    "email": "alexandre.vuillerot@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "expo-toolkit",
+      "source": "./expo-toolkit",
+      "description": "RN+Expo skills + agents + commands + hooks. Authority-led: complements existing ecosystem skills with project-tuned conventions.",
+      "version": "0.1.0",
+      "category": "developer-tools",
+      "author": { "name": "Alexandre Vuillerot" },
+      "license": "MIT",
+      "keywords": ["expo", "react-native", "rn", "skills", "toolkit", "nativewind", "revenuecat", "superwall"]
+    }
+  ]
+}

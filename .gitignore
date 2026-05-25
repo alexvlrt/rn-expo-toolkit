@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+*.log
+.env*
+
+# IDE / editor — may contain absolute paths or local state
+.idea/
+.vscode/
+*.swp
