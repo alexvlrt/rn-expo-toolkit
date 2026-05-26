@@ -108,7 +108,7 @@ A `/new-expo-app` invocation *consumes* the skills · the reviewer agents *apply
 | Hook | Event | Behavior |
 |------|-------|----------|
 | **`block-mobile-secrets`** | `PreToolUse` | **Blocks** edits that introduce an API-key-shaped literal under `apps/mobile/**`. Server-side env vars only. |
-| **`format-on-edit`** | `PostToolUse` | Runs `oxlint --fix` + `prettier --write` on every edited TS/JS file. Best-effort, never blocks. |
+| **`format-on-edit`** | `PostToolUse` | Runs `oxlint --fix` + `prettier --write` on edited TS/JS files — **only inside an RN/Expo project** (no-op in unrelated repos, so it's safe installed user-wide). Best-effort, never blocks. |
 | **`i18n-key-guard`** | `PostToolUse` | **Warns** (doesn't block) when a user-facing JSX string is added without a `t("…")` wrapper. |
 
 <sub>Hooks are portable Node ESM (<code>.mjs</code>) — no <code>jq</code> or other shell dependencies.</sub>

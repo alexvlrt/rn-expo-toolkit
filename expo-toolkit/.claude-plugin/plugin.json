@@ -1,7 +1,7 @@
 {
   "name": "expo-toolkit",
   "description": "RN+Expo toolkit: skills (UI kit, payments, observability, dev scripts, release discipline), project-tuned reviewer agents, convention-enforcing hooks, and orchestration commands. Authority-led — complements building-native-ui, react-native-best-practices, tanstack-query-best-practices, native-data-fetching, RevenueCat:*, expo-deployment, expo-cicd-workflows, eas-update-insights.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Alexandre Vuillerot",
     "email": "alexandre.vuillerot@gmail.com"

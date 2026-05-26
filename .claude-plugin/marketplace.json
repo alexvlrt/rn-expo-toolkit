@@ -11,7 +11,7 @@
       "name": "expo-toolkit",
       "source": "./expo-toolkit",
       "description": "RN+Expo skills + agents + commands + hooks. Authority-led: complements existing ecosystem skills with project-tuned conventions.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "category": "developer-tools",
       "author": { "name": "Alexandre Vuillerot" },
       "license": "MIT",
